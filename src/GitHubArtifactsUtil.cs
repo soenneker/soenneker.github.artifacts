@@ -77,6 +77,7 @@ public class GitHubArtifactsUtil : IGitHubArtifactsUtil
         foreach (Artifact artifact in artifacts)
         {
             _logger.LogInformation("Deleting artifact {artifactName} ({artifactId}) that's {age} days old...", artifact.Name, artifact.Id, artifact.CreatedAt.ToAge(UnitOfTime.Day).ToInt());
+
             await client.Actions.Artifacts.DeleteArtifact(owner, repositoryName, artifact.Id).NoSync();
 
             await Task.Delay(500, cancellationToken).NoSync();
