@@ -44,6 +44,6 @@
     <ItemGroup>
         <PackageReference Include="Soenneker.Extensions.DateTime" Version="3.0.923" />
         <PackageReference Include="Soenneker.Extensions.Double" Version="3.0.397" />
-        <PackageReference Include="Soenneker.GitHub.Client" Version="3.0.1743" />
+        <PackageReference Include="Soenneker.GitHub.Client" Version="3.0.1745" />
     </ItemGroup>
 </Project>
