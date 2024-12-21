@@ -42,7 +42,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Soenneker.Extensions.DateTime" Version="3.0.1023" />
+        <PackageReference Include="Soenneker.Extensions.DateTime" Version="3.0.1027" />
         <PackageReference Include="Soenneker.Extensions.Double" Version="3.0.418" />
         <PackageReference Include="Soenneker.GitHub.Client" Version="3.0.1839" />
     </ItemGroup>
