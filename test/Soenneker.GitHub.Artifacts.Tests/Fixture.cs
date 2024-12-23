@@ -2,8 +2,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Soenneker.Fixtures.Unit;
-using Soenneker.GitHub.Artifacts.Registrars;
 using Soenneker.Utils.Test;
+using Soenneker.GitHub.Artifacts.Registrars;
 
 namespace Soenneker.GitHub.Artifacts.Tests;
 
@@ -25,6 +25,7 @@ public class Fixture : UnitFixture
 
         IConfiguration config = TestUtil.BuildConfig();
         services.AddSingleton(config);
-        services.AddGitHubArtifactsUtilAsSingleton();
+
+        services.AddGitHubArtifactsUtilAsScoped();
     }
 }
