@@ -89,6 +89,6 @@ jobs:
 
       - name: Publish to GitHub Packages
         run: |
-          dotnet nuget push ./nupkg/*.nupkg \
+          dotnet nuget push ./*.nupkg \
             --source "github" \
             --api-key ${{ secrets.GH_TOKEN }}
