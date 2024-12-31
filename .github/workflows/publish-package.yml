@@ -83,6 +83,6 @@ jobs:
         run: |
           dotnet nuget push ./nupkg/*.nupkg \
             --source "github" \
-            --api-key ${{ secrets.TOKEN }}
+            --api-key ${{ secrets.GH_TOKEN }}
         env:
           NUGET_API_URL: https://nuget.pkg.github.com/soenneker/index.json
