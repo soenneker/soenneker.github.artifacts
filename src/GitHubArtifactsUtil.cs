@@ -10,6 +10,8 @@ using Soenneker.Extensions.Double;
 using Soenneker.GitHub.Client.Abstract;
 using Soenneker.Extensions.ValueTask;
 using Soenneker.Extensions.Task;
+using Soenneker.GitHub.Repositories.Abstract;
+using Soenneker.GitHub.Repositories;
 
 namespace Soenneker.GitHub.Artifacts;
 
@@ -17,40 +19,53 @@ namespace Soenneker.GitHub.Artifacts;
 public class GitHubArtifactsUtil : IGitHubArtifactsUtil
 {
     private readonly IGitHubClientUtil _gitHubClientUtil;
+    private readonly IGitHubRepositoriesUtil _gitHubRepositoriesUtil;
     private readonly ILogger<GitHubArtifactsUtil> _logger;
 
     // GitHub restricted
     private const int _maximumPerPage = 100;
 
-    public GitHubArtifactsUtil(ILogger<GitHubArtifactsUtil> logger, IGitHubClientUtil gitHubClientUtil)
+    public GitHubArtifactsUtil(ILogger<GitHubArtifactsUtil> logger, IGitHubClientUtil gitHubClientUtil, IGitHubRepositoriesUtil gitHubRepositoriesUtil)
     {
         _gitHubClientUtil = gitHubClientUtil;
+        _gitHubRepositoriesUtil = gitHubRepositoriesUtil;
         _logger = logger;
     }
 
-    public async ValueTask<List<Artifact>> GetAllArtifactsOlderThan(string owner, string repositoryName, int olderThanDays = 3, CancellationToken cancellationToken = default)
+    public async ValueTask<List<Artifact>> GetAllForOwner(string owner, CancellationToken cancellationToken = default)
     {
+        _logger.LogInformation("Getting all artifacts for owner ({owner})...", owner);
+
+        IReadOnlyList<Repository> allRepos = await _gitHubRepositoriesUtil.GetAllForOwner(owner, cancellationToken).NoSync();
+
         var result = new List<Artifact>();
-        var page = 1;
+
+        foreach (Repository repo in allRepos)
+        {
+            List<Artifact> artifacts = await GetAllForRepo(owner, repo.Name, cancellationToken).NoSync();
+            result.AddRange(artifacts);
+        }
+
+        return result;
+    }
+
+    public async ValueTask<List<Artifact>> GetAllForRepo(string owner, string repo, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Getting all artifacts for repo ({owner}/{repo})...", owner, repo);
 
         GitHubClient client = await _gitHubClientUtil.Get(cancellationToken).NoSync();
 
+        var result = new List<Artifact>();
+        var page = 1;
+
         while (true)
         {
-            ListArtifactsResponse? artifactsResponse = await client.Actions.Artifacts.ListArtifacts(owner, repositoryName, new ListArtifactsRequest {Page = page, PerPage = _maximumPerPage}).NoSync();
+            ListArtifactsResponse? artifactsResponse = await client.Actions.Artifacts.ListArtifacts(owner, repo, new ListArtifactsRequest {Page = page, PerPage = _maximumPerPage}).NoSync();
 
             if (artifactsResponse.TotalCount == 0)
                 break;
 
-            foreach (Artifact? artifact in artifactsResponse.Artifacts)
-            {
-                int ageDays = artifact.CreatedAt.ToAge(UnitOfTime.Day).ToInt();
-
-                if (ageDays > olderThanDays)
-                {
-                    result.Add(artifact);
-                }
-            }
+            result.AddRange(artifactsResponse.Artifacts);
 
             if (artifactsResponse.Artifacts.Count < _maximumPerPage)
                 break;
@@ -61,9 +76,30 @@ public class GitHubArtifactsUtil : IGitHubArtifactsUtil
         return result;
     }
 
+    public async ValueTask<List<Artifact>> GetAllOlderThan(string owner, string repo, int olderThanDays = 3, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Getting all artifacts older than {days} days...", olderThanDays);
+
+        List<Artifact> allArtifacts = await GetAllForRepo(owner, repo, cancellationToken);
+
+        List<Artifact> results = [];
+
+        foreach (Artifact? artifact in allArtifacts)
+        {
+            int ageDays = artifact.CreatedAt.ToAge(UnitOfTime.Day).ToInt();
+
+            if (ageDays > olderThanDays)
+            {
+                results.Add(artifact);
+            }
+        }
+
+        return results;
+    }
+
     public async ValueTask DeleteOldArtifacts(string owner, string repo, int keepWithinDays = 3, CancellationToken cancellationToken = default)
     {
-        List<Artifact> artifacts = await GetAllArtifactsOlderThan(owner, repo, keepWithinDays, cancellationToken).NoSync();
+        List<Artifact> artifacts = await GetAllOlderThan(owner, repo, keepWithinDays, cancellationToken).NoSync();
 
         await DeleteArtifacts(owner, repo, artifacts, cancellationToken).NoSync();
     }
