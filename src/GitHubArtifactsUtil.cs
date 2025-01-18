@@ -65,6 +65,8 @@ public class GitHubArtifactsUtil : IGitHubArtifactsUtil
             if (artifactsResponse.TotalCount == 0)
                 break;
 
+            _logger.LogDebug("{count} artifacts found", artifactsResponse.TotalCount);
+
             result.AddRange(artifactsResponse.Artifacts);
 
             if (artifactsResponse.Artifacts.Count < _maximumPerPage)
