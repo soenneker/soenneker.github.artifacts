@@ -1,3 +1,4 @@
+using System;
 using Soenneker.GitHub.Artifacts.Abstract;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -32,11 +33,11 @@ public class GitHubArtifactsUtil : IGitHubArtifactsUtil
         _logger = logger;
     }
 
-    public async ValueTask<List<Artifact>> GetAllForOwner(string owner, CancellationToken cancellationToken = default)
+    public async ValueTask<List<Artifact>> GetAllForOwner(string owner, DateTime? startAt = null, DateTime? endAt = null, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Getting all artifacts for owner ({owner})...", owner);
 
-        IReadOnlyList<Repository> allRepos = await _gitHubRepositoriesUtil.GetAllForOwner(owner, cancellationToken).NoSync();
+        IReadOnlyList<Repository> allRepos = await _gitHubRepositoriesUtil.GetAllForOwner(owner, null, endAt, cancellationToken).NoSync();
 
         var result = new List<Artifact>();
 
@@ -82,7 +83,7 @@ public class GitHubArtifactsUtil : IGitHubArtifactsUtil
     {
         _logger.LogInformation("Getting all artifacts older than {days} days...", olderThanDays);
 
-        List<Artifact> allArtifacts = await GetAllForRepo(owner, repo, cancellationToken);
+        List<Artifact> allArtifacts = await GetAllForRepo(owner, repo, cancellationToken).NoSync();
 
         List<Artifact> results = [];
 

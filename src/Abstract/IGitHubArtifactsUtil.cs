@@ -2,6 +2,7 @@ using Octokit;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
+using System;
 
 namespace Soenneker.GitHub.Artifacts.Abstract;
 
@@ -10,7 +11,7 @@ namespace Soenneker.GitHub.Artifacts.Abstract;
 /// </summary>
 public interface IGitHubArtifactsUtil
 {
-    ValueTask<List<Artifact>> GetAllForOwner(string owner, CancellationToken cancellationToken = default);
+    ValueTask<List<Artifact>> GetAllForOwner(string owner, DateTime? startAt = null, DateTime? endAt = null, CancellationToken cancellationToken = default);
 
     ValueTask<List<Artifact>> GetAllOlderThan(string owner, string repo, int olderThanDays = 3, CancellationToken cancellationToken = default);
 
