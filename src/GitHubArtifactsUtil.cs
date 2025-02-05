@@ -12,7 +12,6 @@ using Soenneker.GitHub.Client.Abstract;
 using Soenneker.Extensions.ValueTask;
 using Soenneker.Extensions.Task;
 using Soenneker.GitHub.Repositories.Abstract;
-using Soenneker.GitHub.Repositories;
 
 namespace Soenneker.GitHub.Artifacts;
 

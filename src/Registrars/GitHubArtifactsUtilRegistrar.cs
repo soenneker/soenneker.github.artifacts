@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Soenneker.GitHub.Artifacts.Abstract;
-using Soenneker.GitHub.Client.Registrars;
 using Soenneker.GitHub.Repositories.Registrars;
 
 namespace Soenneker.GitHub.Artifacts.Registrars;
@@ -16,8 +15,8 @@ public static class GitHubArtifactsUtilRegistrar
     /// </summary>
     public static IServiceCollection AddGitHubArtifactsUtilAsSingleton(this IServiceCollection services)
     {
-        services.AddGitHubRepositoriesUtilAsSingleton();
-        services.TryAddSingleton<IGitHubArtifactsUtil, GitHubArtifactsUtil>();
+        services.AddGitHubRepositoriesUtilAsSingleton()
+                .TryAddSingleton<IGitHubArtifactsUtil, GitHubArtifactsUtil>();
 
         return services;
     }
@@ -27,8 +26,8 @@ public static class GitHubArtifactsUtilRegistrar
     /// </summary>
     public static IServiceCollection AddGitHubArtifactsUtilAsScoped(this IServiceCollection services)
     {
-        services.AddGitHubRepositoriesUtilAsScoped();
-        services.TryAddScoped<IGitHubArtifactsUtil, GitHubArtifactsUtil>();
+        services.AddGitHubRepositoriesUtilAsScoped()
+                .TryAddScoped<IGitHubArtifactsUtil, GitHubArtifactsUtil>();
 
         return services;
     }
