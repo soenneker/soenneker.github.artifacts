@@ -1,4 +1,4 @@
-# Contributing to Soenneker.GitHub.Artifacts
+﻿# Contributing to Soenneker.GitHub.Artifacts
 
 We're excited that you're interested in contributing!
 
