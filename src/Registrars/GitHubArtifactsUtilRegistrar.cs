@@ -15,8 +15,7 @@ public static class GitHubArtifactsUtilRegistrar
     /// </summary>
     public static IServiceCollection AddGitHubArtifactsUtilAsSingleton(this IServiceCollection services)
     {
-        services.AddGitHubRepositoriesUtilAsSingleton()
-                .TryAddSingleton<IGitHubArtifactsUtil, GitHubArtifactsUtil>();
+        services.AddGitHubRepositoriesUtilAsSingleton().TryAddSingleton<IGitHubArtifactsUtil, GitHubArtifactsUtil>();
 
         return services;
     }
@@ -26,8 +25,7 @@ public static class GitHubArtifactsUtilRegistrar
     /// </summary>
     public static IServiceCollection AddGitHubArtifactsUtilAsScoped(this IServiceCollection services)
     {
-        services.AddGitHubRepositoriesUtilAsScoped()
-                .TryAddScoped<IGitHubArtifactsUtil, GitHubArtifactsUtil>();
+        services.AddGitHubRepositoriesUtilAsScoped().TryAddScoped<IGitHubArtifactsUtil, GitHubArtifactsUtil>();
 
         return services;
     }
