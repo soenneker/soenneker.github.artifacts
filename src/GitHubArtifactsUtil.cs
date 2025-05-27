@@ -53,7 +53,7 @@ public class GitHubArtifactsUtil : IGitHubArtifactsUtil
     {
         _logger.LogInformation("Getting all artifacts for repo ({owner}/{repo})...", owner, repo);
 
-        GitHubOpenApiClient client = await _gitHubClientUtil.Get(cancellationToken);
+        GitHubOpenApiClient client = await _gitHubClientUtil.Get(cancellationToken).NoSync();
 
         var result = new List<Artifact>();
         var page = 1;
