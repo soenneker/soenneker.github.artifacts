@@ -61,7 +61,7 @@ public sealed class GitHubArtifactsUtil : IGitHubArtifactsUtil
         while (true)
         {
             ArtifactsGetResponse? artifactsResponse = await client.Repos[owner][repo]
-                                                                  .Actions.Artifacts.GetAsArtifactsGetResponseAsync(requestConfiguration =>
+                                                                  .Actions.Artifacts.GetAsync(requestConfiguration =>
                                                                   {
                                                                       requestConfiguration.QueryParameters.Page = page;
                                                                       requestConfiguration.QueryParameters.PerPage = _maximumPerPage;
