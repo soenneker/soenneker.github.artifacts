@@ -30,19 +30,21 @@ public sealed class GitHubArtifactsUtil : IGitHubArtifactsUtil
         _repositoriesUtil = repositoriesUtil;
     }
 
-    public async ValueTask<List<Artifact>> GetAllForOwner(string owner, DateTime? startAt = null, DateTime? endAt = null,
+    public async ValueTask<List<Artifact>> GetAllForOwner(string owner, DateTimeOffset? startAt = null, DateTimeOffset? endAt = null,
         CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Getting all artifacts for owner ({owner})...", owner);
 
-        IReadOnlyList<MinimalRepository> allRepos = await _repositoriesUtil.GetAllForOwner(owner, startAt, endAt, cancellationToken).NoSync();
+        IReadOnlyList<MinimalRepository> allRepos = await _repositoriesUtil.GetAllForOwner(owner, startAt, endAt, cancellationToken)
+                                                                           .NoSync();
 
         var result = new List<Artifact>();
 
         for (var i = 0; i < allRepos.Count; i++)
         {
             MinimalRepository repo = allRepos[i];
-            List<Artifact> artifacts = await GetAllForRepo(owner, repo.Name, cancellationToken).NoSync();
+            List<Artifact> artifacts = await GetAllForRepo(owner, repo.Name, cancellationToken)
+                .NoSync();
             result.AddRange(artifacts);
         }
 
@@ -53,7 +55,8 @@ public sealed class GitHubArtifactsUtil : IGitHubArtifactsUtil
     {
         _logger.LogInformation("Getting all artifacts for repo ({owner}/{repo})...", owner, repo);
 
-        GitHubOpenApiClient client = await _gitHubClientUtil.Get(cancellationToken).NoSync();
+        GitHubOpenApiClient client = await _gitHubClientUtil.Get(cancellationToken)
+                                                            .NoSync();
 
         var result = new List<Artifact>();
         var page = 1;
@@ -65,7 +68,8 @@ public sealed class GitHubArtifactsUtil : IGitHubArtifactsUtil
                                                                   {
                                                                       requestConfiguration.QueryParameters.Page = page;
                                                                       requestConfiguration.QueryParameters.PerPage = _maximumPerPage;
-                                                                  }, cancellationToken).NoSync();
+                                                                  }, cancellationToken)
+                                                                  .NoSync();
 
             if (artifactsResponse?.TotalCount == 0)
                 break;
@@ -90,18 +94,19 @@ public sealed class GitHubArtifactsUtil : IGitHubArtifactsUtil
     {
         _logger.LogInformation("Getting all artifacts older than {days} days...", olderThanDays);
 
-        List<Artifact> allArtifacts = await GetAllForRepo(owner, repo, cancellationToken).NoSync();
+        List<Artifact> allArtifacts = await GetAllForRepo(owner, repo, cancellationToken)
+            .NoSync();
 
         var results = new List<Artifact>();
 
         for (var i = 0; i < allArtifacts.Count; i++)
         {
-            Artifact? artifact = allArtifacts[i];
+            Artifact artifact = allArtifacts[i];
 
-            if (artifact?.CreatedAt == null)
+            if (artifact.CreatedAt == null)
                 continue;
 
-            var ageDays = (int) (DateTime.UtcNow - artifact.CreatedAt.Value.DateTime).TotalDays;
+            var ageDays = (int)(DateTimeOffset.UtcNow - artifact.CreatedAt.Value).TotalDays;
 
             if (ageDays > olderThanDays)
             {
@@ -114,16 +119,19 @@ public sealed class GitHubArtifactsUtil : IGitHubArtifactsUtil
 
     public async ValueTask DeleteOldArtifacts(string owner, string repo, int keepWithinDays = 3, CancellationToken cancellationToken = default)
     {
-        List<Artifact> artifacts = await GetAllOlderThan(owner, repo, keepWithinDays, cancellationToken).NoSync();
+        List<Artifact> artifacts = await GetAllOlderThan(owner, repo, keepWithinDays, cancellationToken)
+            .NoSync();
 
-        await DeleteArtifacts(owner, repo, artifacts, cancellationToken).NoSync();
+        await DeleteArtifacts(owner, repo, artifacts, cancellationToken)
+            .NoSync();
     }
 
     public async ValueTask DeleteArtifacts(string owner, string repositoryName, List<Artifact> artifacts, CancellationToken cancellationToken = default)
     {
         _logger.LogWarning("Deleting {count} artifacts...", artifacts.Count);
 
-        GitHubOpenApiClient client = await _gitHubClientUtil.Get(cancellationToken).NoSync();
+        GitHubOpenApiClient client = await _gitHubClientUtil.Get(cancellationToken)
+                                                            .NoSync();
 
         for (var i = 0; i < artifacts.Count; i++)
         {
@@ -131,13 +139,17 @@ public sealed class GitHubArtifactsUtil : IGitHubArtifactsUtil
             if (artifact.Id == null)
                 continue;
 
-            var ageDays = (int) (DateTime.UtcNow - artifact.CreatedAt!.Value.DateTime).TotalDays;
+            var ageDays = (int)(DateTimeOffset.UtcNow - artifact.CreatedAt!.Value).TotalDays;
 
             _logger.LogInformation("Deleting artifact {artifactName} ({artifactId}) that's {age} days old...", artifact.Name, artifact.Id, ageDays);
 
-            await client.Repos[owner][repositoryName].Actions.Artifacts[artifact.Id.Value].DeleteAsync(cancellationToken: cancellationToken).NoSync();
+            await client.Repos[owner][repositoryName]
+                        .Actions.Artifacts[artifact.Id.Value]
+                        .DeleteAsync(cancellationToken: cancellationToken)
+                        .NoSync();
 
-            await DelayUtil.Delay(500, _logger, cancellationToken).NoSync();
+            await DelayUtil.Delay(500, _logger, cancellationToken)
+                           .NoSync();
         }
     }
 }

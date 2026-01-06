@@ -19,7 +19,7 @@ public interface IGitHubArtifactsUtil
     /// <param name="endAt">Optional filter to only include repositories created before this date.</param>
     /// <param name="cancellationToken">A cancellation token for the async operation.</param>
     /// <returns>A list of artifacts across all repositories owned by the given user or organization.</returns>
-    ValueTask<List<Artifact>> GetAllForOwner(string owner, DateTime? startAt = null, DateTime? endAt = null, CancellationToken cancellationToken = default);
+    ValueTask<List<Artifact>> GetAllForOwner(string owner, DateTimeOffset? startAt = null, DateTimeOffset? endAt = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieves all GitHub Actions artifacts for a specific repository.
