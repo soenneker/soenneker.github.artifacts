@@ -43,6 +43,6 @@
     <ItemGroup>
         <PackageReference Include="Soenneker.Extensions.Task" Version="4.0.111" />
         <PackageReference Include="Soenneker.GitHub.Repositories" Version="4.0.875" />
-        <PackageReference Include="Soenneker.Utils.Delay" Version="4.0.46" />
+        <PackageReference Include="Soenneker.Utils.Delay" Version="4.0.47" />
     </ItemGroup>
 </Project>
