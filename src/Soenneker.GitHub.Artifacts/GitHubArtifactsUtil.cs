@@ -63,7 +63,7 @@ public sealed class GitHubArtifactsUtil : IGitHubArtifactsUtil
 
         while (true)
         {
-            ArtifactsGetResponse? artifactsResponse = await client.Repos[owner][repo]
+            ActionsListArtifactsForRepo200Response? artifactsResponse = await client.Repos[owner][repo]
                                                                   .Actions.Artifacts.GetAsync(requestConfiguration =>
                                                                   {
                                                                       requestConfiguration.QueryParameters.Page = page;
@@ -144,7 +144,7 @@ public sealed class GitHubArtifactsUtil : IGitHubArtifactsUtil
             _logger.LogInformation("Deleting artifact {artifactName} ({artifactId}) that's {age} days old...", artifact.Name, artifact.Id, ageDays);
 
             await client.Repos[owner][repositoryName]
-                        .Actions.Artifacts[artifact.Id.Value]
+                        .Actions.Artifacts[artifact.Id.Value.ToString()]
                         .DeleteAsync(cancellationToken: cancellationToken)
                         .NoSync();
 
