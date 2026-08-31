@@ -15,7 +15,6 @@ using System.Threading.Tasks;
 
 namespace Soenneker.GitHub.Artifacts;
 
-///<inheritdoc cref="IGitHubArtifactsUtil"/>
 public sealed class GitHubArtifactsUtil : IGitHubArtifactsUtil
 {
     private readonly ILogger<GitHubArtifactsUtil> _logger;
@@ -43,7 +42,14 @@ public sealed class GitHubArtifactsUtil : IGitHubArtifactsUtil
         for (var i = 0; i < allRepos.Count; i++)
         {
             MinimalRepository repo = allRepos[i];
-            List<Artifact> artifacts = await GetAllForRepo(owner, repo.Name, cancellationToken)
+
+            if (repo.Name is not { Length: > 0 } repoName)
+            {
+                _logger.LogWarning("Skipping a repository without a name while retrieving artifacts for {owner}", owner);
+                continue;
+            }
+
+            List<Artifact> artifacts = await GetAllForRepo(owner, repoName, cancellationToken)
                 .NoSync();
             result.AddRange(artifacts);
         }
@@ -139,7 +145,9 @@ public sealed class GitHubArtifactsUtil : IGitHubArtifactsUtil
             if (artifact.Id == null)
                 continue;
 
-            var ageDays = (int)(DateTimeOffset.UtcNow - artifact.CreatedAt!.Value).TotalDays;
+            int? ageDays = artifact.CreatedAt is { } createdAt
+                ? (int)(DateTimeOffset.UtcNow - createdAt).TotalDays
+                : null;
 
             _logger.LogInformation("Deleting artifact {artifactName} ({artifactId}) that's {age} days old...", artifact.Name, artifact.Id, ageDays);
 
