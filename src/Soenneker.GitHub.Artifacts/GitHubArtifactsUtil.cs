@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace Soenneker.GitHub.Artifacts;
 
+/// <inheritdoc cref="IGitHubArtifactsUtil" />
 public sealed class GitHubArtifactsUtil : IGitHubArtifactsUtil
 {
     private readonly ILogger<GitHubArtifactsUtil> _logger;
