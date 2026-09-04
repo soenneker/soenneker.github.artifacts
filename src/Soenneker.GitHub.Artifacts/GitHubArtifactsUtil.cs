@@ -35,8 +35,8 @@ public sealed class GitHubArtifactsUtil : IGitHubArtifactsUtil
     {
         _logger.LogInformation("Getting all artifacts for owner ({owner})...", owner);
 
-        IReadOnlyList<MinimalRepository> allRepos = await _repositoriesUtil.GetAllForOwner(owner, startAt, endAt, cancellationToken)
-                                                                           .NoSync();
+        List<MinimalRepository> allRepos = await _repositoriesUtil.GetAllForOwner(owner, startAt, endAt, cancellationToken)
+                                                        .NoSync();
 
         var result = new List<Artifact>();
 
