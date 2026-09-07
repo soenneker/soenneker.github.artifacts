@@ -78,7 +78,7 @@ public sealed class GitHubArtifactsUtil : IGitHubArtifactsUtil
                                                                   }, cancellationToken)
                                                                   .NoSync();
 
-            if (artifactsResponse?.TotalCount == 0)
+            if (artifactsResponse?.Artifacts is null || artifactsResponse.TotalCount == 0)
                 break;
 
             _logger.LogDebug("{count} artifacts found", artifactsResponse?.TotalCount);
