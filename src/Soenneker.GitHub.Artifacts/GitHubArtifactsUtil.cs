@@ -153,7 +153,7 @@ public sealed class GitHubArtifactsUtil : IGitHubArtifactsUtil
             _logger.LogInformation("Deleting artifact {artifactName} ({artifactId}) that's {age} days old...", artifact.Name, artifact.Id, ageDays);
 
             await client.Repos[owner][repositoryName]
-                        .Actions.Artifacts[artifact.Id.Value.ToString()]
+                        .Actions.Artifacts[artifact.Id.Value]
                         .DeleteAsync(cancellationToken: cancellationToken)
                         .NoSync();
 

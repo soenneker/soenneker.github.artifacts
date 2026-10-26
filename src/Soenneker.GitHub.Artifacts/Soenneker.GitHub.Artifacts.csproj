@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
+        <TargetFramework>net11.0</TargetFramework>
         <IsAotCompatible>true</IsAotCompatible>
         <Nullable>enable</Nullable>
         <Platforms>AnyCPU</Platforms>
@@ -10,7 +10,7 @@
 
     <PropertyGroup>
         <Description>Lists and deletes GitHub Actions artifacts across repositories.</Description>
-        <Version Condition="'$(BUILD_VERSION)' == ''">4.0.0</Version>
+        <Version Condition="'$(BUILD_VERSION)' == ''">11.0.0</Version>
         <Version Condition="'$(BUILD_VERSION)' != ''">$(BUILD_VERSION)</Version>
         <AssemblyName>Soenneker.GitHub.Artifacts</AssemblyName>
         <PackageId>Soenneker.GitHub.Artifacts</PackageId>
@@ -45,7 +45,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Soenneker.GitHub.Repositories" Version="4.0.1361" />
-        <PackageReference Include="Soenneker.Utils.Delay" Version="4.0.104" />
+        <PackageReference Include="Soenneker.GitHub.Repositories" Version="4.0.1362" />
+        <PackageReference Include="Soenneker.Utils.Delay" Version="4.0.105" />
     </ItemGroup>
 </Project>
